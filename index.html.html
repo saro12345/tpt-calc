@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPT Performance Rechner - Dual Account Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Simple icon replacements */
+        .icon {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+            text-align: center;
+            line-height: 1.5rem;
+        }
+        .icon-sm {
+            width: 1rem;
+            height: 1rem;
+            font-size: 0.9rem;
+            line-height: 1rem;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="max-w-7xl mx-auto p-6">
+        <div class="bg-white rounded-xl card-shadow p-8 mb-8 animate-fade-in">
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-8">
+                <span class="icon text-blue-600">🧮</span>
+                <h1 class="text-3xl font-bold text-gray-800">TakeProfit Trader (TPT) Performance Center</h1>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="flex flex-wrap gap-2 mb-8 border-b border-gray-200">
+                <button onclick="showTab('overview')" id="tab-overview" class="px-4 py-2 rounded-t-lg font-medium transition-colors bg-blue-500 text-white border-b-2 border-blue-500">
+                    <span class="icon-sm">📊</span>
+                    Übersicht
+                </button>
+                <button onclick="showTab('account1')" id="tab-account1" class="px-4 py-2 rounded-t-lg font-medium transition-colors text-gray-600 hover:text-gray-800 hover:bg-gray-100">
+                    <span class="icon-sm">🎯</span>
+                    Account 1 (TPT5583736)
+                </button>
+                <button onclick="showTab('account2')" id="tab-account2" class="px-4 py-2 rounded-t-lg font-medium transition-colors text-gray-600 hover:text-gray-800 hover:bg-gray-100">
+                    <span class="icon-sm">👥</span>
+                    Account 2 (TPT1231002)
+                </button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="content-overview" class="tab-content">
+                <!-- Combined Performance Cards -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Account 1 Overview -->
+                    <div class="bg-gradient-to-br from-purple-50 to-indigo-100 rounded-xl p-6 border border-purple-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-purple-800">Account 1</h3>
+                                <p class="text-sm text-purple-600 font-mono">TPT5583736</p>
+                            </div>
+                            <div id="acc1-status" class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                Bestanden
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-purple-700">Aktueller Profit:</span>
+                                <span id="acc1-profit" class="font-bold text-purple-900">$1,320.50</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-purple-700">Konsistenz:</span>
+                                <span id="acc1-consistency" class="font-bold text-purple-900">29.0%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-purple-700">Trading Tage:</span>
+                                <span id="acc1-days" class="font-bold text-purple-900">2 / 5</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-purple-700">Verbleibend:</span>
+                                <span id="acc1-remaining" class="font-bold text-purple-900">$1,679.50</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account 2 Overview -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-6 border border-emerald-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-emerald-800">Account 2</h3>
+                                <p class="text-sm text-emerald-600 font-mono">TPT1231002</p>
+                            </div>
+                            <div id="acc2-status" class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                Bestanden
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-emerald-700">Aktueller Profit:</span>
+                                <span id="acc2-profit" class="font-bold text-emerald-900">$1,410.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-emerald-700">Konsistenz:</span>
+                                <span id="acc2-consistency" class="font-bold text-emerald-900">28.7%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-emerald-700">Trading Tage:</span>
+                                <span id="acc2-days" class="font-bold text-emerald-900">2 / 5</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-emerald-700">Verbleibend:</span>
+                                <span id="acc2-remaining" class="font-bold text-emerald-900">$1,590.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Combined Stats -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 mb-8">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">📊 Gesamtübersicht</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <p id="total-profit" class="text-2xl font-bold text-blue-900">$2,730.50</p>
+                            <p class="text-sm text-blue-700">Gesamtprofit</p>
+                        </div>
+                        <div class="text-center">
+                            <p id="total-balance" class="text-2xl font-bold text-blue-900">$102,730.50</p>
+                            <p class="text-sm text-blue-700">Gesamtbalance</p>
+                        </div>
+                        <div class="text-center">
+                            <p id="total-days" class="text-2xl font-bold text-blue-900">4</p>
+                            <p class="text-sm text-blue-700">Trading Tage Total</p>
+                        </div>
+                        <div class="text-center">
+                            <p id="total-remaining" class="text-2xl font-bold text-blue-900">$3,269.50</p>
+                            <p class="text-sm text-blue-700">Verbleibendes Ziel</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Add for Today -->
+                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">⚡ Schnell-Eingabe für heute</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Account wählen</label>
+                            <select id="selected-account" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="1">Account 1 (TPT5583736)</option>
+                                <option value="2">Account 2 (TPT1231002)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Datum</label>
+                            <input type="date" id="new-date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">P&L ($)</label>
+                            <div class="flex gap-2">
+                                <input type="number" step="0.01" id="new-pnl" placeholder="z.B. 500.00" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <button onclick="addTradingDay()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                    ➕
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Live Calculator -->
+                    <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 mb-3">📊 Live-Berechnung</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Simulieren für Account</label>
+                                <select id="calc-account" onchange="updateLiveCalc()" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="1">Account 1 (TPT5583736)</option>
+                                    <option value="2">Account 2 (TPT1231002)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Hypothetischer Profit ($)</label>
+                                <input type="number" step="0.01" id="calc-profit" oninput="updateLiveCalc()" placeholder="z.B. 500.00" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div id="calc-result" class="mt-4 p-3 bg-white rounded border text-sm text-gray-500">
+                            Geben Sie einen Profit-Wert ein für Live-Berechnung
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account 1 Tab -->
+            <div id="content-account1" class="tab-content hidden">
+                <div class="space-y-8">
+                    <!-- Account Info Banner -->
+                    <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-purple-800">Account 1 - TPT5583736</h3>
+                                <p class="text-sm text-gray-600">Trading-Periode: 11.07.2025 - 14.07.2025</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-purple-800">Ziel: $53,000.00</p>
+                                <p class="text-sm text-gray-600">Min. Balance: $49,320.50</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Cards Account 1 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">💰</span>
+                                <h3 class="text-lg font-semibold">Account Balance</h3>
+                            </div>
+                            <p class="text-2xl font-bold">$51,320.50</p>
+                            <p class="opacity-90">Min: $49,320.50</p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">📈</span>
+                                <h3 class="text-lg font-semibold">Profit Progress</h3>
+                            </div>
+                            <p class="text-2xl font-bold">$1,320.50</p>
+                            <p class="text-blue-100">44.0% von $3,000.00</p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-6 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">📅</span>
+                                <h3 class="text-lg font-semibold">Trading Days</h3>
+                            </div>
+                            <p class="text-2xl font-bold">2 / 5</p>
+                            <p class="text-orange-100">Noch 3 Tage benötigt</p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">✅</span>
+                                <h3 class="text-lg font-semibold">Konsistenz</h3>
+                            </div>
+                            <p class="text-2xl font-bold">29.0%</p>
+                            <p class="text-sm opacity-90">Bestanden (Max: 50%)</p>
+                        </div>
+                    </div>
+
+                    <!-- Goals Section -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-orange-800 mb-4">🎯 Ziele für verbleibende 3 Tage</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border border-yellow-200">
+                                <h4 class="font-semibold text-gray-800 mb-3">💰 Profit-Ziel</h4>
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-600">
+                                        <strong>Noch benötigt:</strong> <span class="text-orange-600 font-mono">$1,679.50</span>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <strong>Verbleibende Tage:</strong> <span class="text-blue-600 font-mono">3</span>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <strong>Ø pro Tag:</strong> <span class="text-green-600 font-mono">$559.83</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-4 border border-yellow-200">
+                                <h4 class="font-semibold text-gray-800 mb-3">⚖️ Konsistenz-Sicherheit</h4>
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-600">
+                                        <strong>Aktuell größter Tag:</strong> <span class="text-purple-600 font-mono">$870.00</span>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <strong>Max. bei Ziel-Erreichen:</strong> <span class="text-orange-600 font-mono">$1,500.00</span>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <strong>Sicher pro Tag:</strong> <span class="text-green-600 font-mono">$559.82</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trading Journal Account 1 -->
+                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-800">Trading Journal - Account 1 (TPT5583736)</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Datum</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">P&L</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anteil am Gesamtprofit</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="account1-table" class="bg-white divide-y divide-gray-200">
+                                    <!-- Dynamic content will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tick Calculator Account 1 -->
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">🎯 Tick-Berechnung für Account 1</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border border-gray-200">
+                                <h4 class="font-semibold text-gray-800 mb-3">⚡ NQ (Nasdaq-100) - $5 pro Tick</h4>
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-600"><strong>Ø täglich benötigt:</strong> $559.83</p>
+                                    <div class="bg-blue-50 p-3 rounded">
+                                        <p class="text-blue-700"><strong>1 Kontrakt:</strong> 112 Ticks</p>
+                                        <p class="text-blue-700"><strong>2 Kontrakte:</strong> 56 Ticks</p>
+                                        <p class="text-blue-700"><strong>3 Kontrakte:</strong> 38 Ticks</p>
+                                        <p class="text-blue-700"><strong>4 Kontrakte:</strong> 28 Ticks</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-4 border border-gray-200">
+                                <h4 class="font-semibold text-gray-800 mb-3">🚀 ES (S&P 500) - $12.50 pro Tick</h4>
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-600"><strong>Ø täglich benötigt:</strong> $559.83</p>
+                                    <div class="bg-green-50 p-3 rounded">
+                                        <p class="text-green-700"><strong>1 Kontrakt:</strong> 45 Ticks</p>
+                                        <p class="text-green-700"><strong>2 Kontrakte:</strong> 23 Ticks</p>
+                                        <p class="text-green-700"><strong>3 Kontrakte:</strong> 15 Ticks</p>
+                                        <p class="text-green-700"><strong>4 Kontrakte:</strong> 12 Ticks</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account 2 Tab -->
+            <div id="content-account2" class="tab-content hidden">
+                <div class="space-y-8">
+                    <!-- Account Info Banner -->
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-emerald-800">Account 2 - TPT1231002</h3>
+                                <p class="text-sm text-gray-600">Trading-Periode: 11.07.2025 - 14.07.2025</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-emerald-800">Ziel: $53,000.00</p>
+                                <p class="text-sm text-gray-600">Min. Balance: $49,410.00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Cards Account 2 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg p-6 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">💰</span>
+                                <h3 class="text-lg font-semibold">Account Balance</h3>
+                            </div>
+                            <p class="text-2xl font-bold">$51,410.00</p>
+                            <p class="opacity-90">Min: $49,410.00</p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">📈</span>
+                                <h3 class="text-lg font-semibold">Profit Progress</h3>
+                            </div>
+                            <p class="text-2xl font-bold">$1,410.00</p>
+                            <p class="text-blue-100">47.0% von $3,000.00</p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-6 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">📅</span>
+                                <h3 class="text-lg font-semibold">Trading Days</h3>
+                            </div>
+                            <p class="text-2xl font-bold">2 / 5</p>
+                            <p class="text-orange-100">Noch 3 Tage benötigt</p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">✅</span>
+                                <h3 class="text-lg font-semibold">Konsistenz</h3>
+                            </div>
+                            <p class="text-2xl font-bold">28.7%</p>
+                            <p class="text-sm opacity-90">Bestanden (Max: 50%)</p>
+                        </div>
+                    </div>
+
+                    <!-- Goals Section -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-orange-800 mb-4">🎯 Ziele für verbleibende 3 Tage</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border border-yellow-200">
+                                <h4 class="font-semibold text-gray-800 mb-3">💰 Profit-Ziel</h4>
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-600">
+                                        <strong>Noch benötigt:</strong> <span class="text-orange-600 font-mono">$1,590.00</span>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <strong>Verbleibende Tage:</strong> <span class="text-blue-600 font-mono">3</span>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <strong>Ø pro Tag:</strong> <span class="text-green-600 font-mono">$530.00</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-4 border border-yellow-200">
+                                <h4 class="font-semibold text-gray-800 mb-3">⚖️ Konsistenz-Sicherheit</h4>
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-600">
+                                        <strong>Aktuell größter Tag:</strong> <span class="text-purple-600 font-mono">$860.00</span>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <strong>Max. bei Ziel-Erreichen:</strong> <span class="text-orange-600 font-mono">$1,500.00</span>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <strong>Sicher pro Tag:</strong> <span class="text-green-600 font-mono">$529.99</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trading Journal Account 2 -->
+                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-800">Trading Journal - Account 2 (TPT1231002)</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Datum</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">P&L</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anteil am Gesamtprofit</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="account2-table" class="bg-white divide-y divide-gray-200">
+                                    <!-- Dynamic content will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tick Calculator Account 2 -->
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">🎯 Tick-Berechnung für Account 2</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border border-gray-200">
+                                <h4 class="font-semibold text-gray-800 mb-3">⚡ NQ (Nasdaq-100) - $5 pro Tick</h4>
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-600"><strong>Ø täglich benötigt:</strong> $530.00</p>
+                                    <div class="bg-blue-50 p-3 rounded">
+                                        <p class="text-blue-700"><strong>1 Kontrakt:</strong> 106 Ticks</p>
+                                        <p class="text-blue-700"><strong>2 Kontrakte:</strong> 53 Ticks</p>
+                                        <p class="text-blue-700"><strong>3 Kontrakte:</strong> 36 Ticks</p>
+                                        <p class="text-blue-700"><strong>4 Kontrakte:</strong> 27 Ticks</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-4 border border-gray-200">
+                                <h4 class="font-semibold text-gray-800 mb-3">🚀 ES (S&P 500) - $12.50 pro Tick</h4>
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-600"><strong>Ø täglich benötigt:</strong> $530.00</p>
+                                    <div class="bg-green-50 p-3 rounded">
+                                        <p class="text-green-700"><strong>1 Kontrakt:</strong> 43 Ticks</p>
+                                        <p class="text-green-700"><strong>2 Kontrakte:</strong> 22 Ticks</p>
+                                        <p class="text-green-700"><strong>3 Kontrakte:</strong> 15 Ticks</p>
+                                        <p class="text-green-700"><strong>4 Kontrakte:</strong> 11 Ticks</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        let account1Days = [
+            { date: '2025-07-14', pnl: 450.50 },
+            { date: '2025-07-11', pnl: 870.00 }
+        ];
+
+        let account2Days = [
+            { date: '2025-07-14', pnl: 550.00 },
+            { date: '2025-07-11', pnl: 860.00 }
+        ];
+
+        // Account Configurations
+        const accountConfigs = {
+            1: {
+                name: 'Account 1',
+                accountNumber: 'TPT5583736',
+                initialBalance: 50000,
+                profitTarget: 3000,
+                targetBalance: 53000,
+                minTradingDays: 5,
+                maxContracts: 6,
+                minBalance: 49320.5,
+                colorScheme: 'purple'
+            },
+            2: {
+                name: 'Account 2',
+                accountNumber: 'TPT1231002',
+                initialBalance: 50000,
+                profitTarget: 3000,
+                targetBalance: 53000,
+                minTradingDays: 5,
+                maxContracts: 6,
+                minBalance: 49410,
+                colorScheme: 'emerald'
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAllDisplays();
+            
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('new-date').value = today;
+        });
+
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+                tab.className = 'px-4 py-2 rounded-t-lg font-medium transition-colors text-gray-600 hover:text-gray-800 hover:bg-gray-100';
+            });
+
+            // Show selected tab content
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+
+            // Set active tab style
+            const activeTab = document.getElementById(`tab-${tabName}`);
+            if (tabName === 'overview') {
+                activeTab.className = 'px-4 py-2 rounded-t-lg font-medium transition-colors bg-blue-500 text-white border-b-2 border-blue-500';
+            } else if (tabName === 'account1') {
+                activeTab.className = 'px-4 py-2 rounded-t-lg font-medium transition-colors bg-purple-500 text-white border-b-2 border-purple-500';
+            } else if (tabName === 'account2') {
+                activeTab.className = 'px-4 py-2 rounded-t-lg font-medium transition-colors bg-emerald-500 text-white border-b-2 border-emerald-500';
+            }
+        }
+
+        // Currency formatting
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('de-DE', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(amount);
+        }
+
+        // Date formatting
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('de-DE');
+        }
+
+        // Calculate metrics for an account
+        function calculateMetrics(tradingDays, accountNum) {
+            const config = accountConfigs[accountNum];
+            
+            if (tradingDays.length === 0) {
+                return {
+                    totalProfit: 0,
+                    totalProfitPercentage: 0,
+                    currentBalance: config.initialBalance,
+                    highestProfitDay: 0,
+                    consistencyPercentage: 0,
+                    consistencyStatus: 'Keine Daten',
+                    profitableDays: 0,
+                    lossDays: 0,
+                    remainingDays: config.minTradingDays,
+                    remainingProfit: config.profitTarget,
+                    targetReached: false,
+                    consistencyPassed: false
+                };
+            }
+
+            const sortedDays = [...tradingDays].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const totalProfit = sortedDays.reduce((sum, day) => sum + day.pnl, 0);
+            const currentBalance = config.initialBalance + totalProfit;
+            const highestProfitDay = Math.max(...sortedDays.map(day => day.pnl));
+            
+            const consistencyPercentage = totalProfit > 0 ? (highestProfitDay / totalProfit) * 100 : 0;
+            const consistencyPassed = consistencyPercentage <= 50;
+            const consistencyStatus = consistencyPassed ? 'Bestanden' : 'Nicht bestanden';
+            
+            const profitableDays = sortedDays.filter(day => day.pnl > 0).length;
+            const lossDays = sortedDays.filter(day => day.pnl < 0).length;
+            const remainingDays = Math.max(0, config.minTradingDays - tradingDays.length);
+            const remainingProfit = Math.max(0, config.profitTarget - totalProfit);
+            const targetReached = totalProfit >= config.profitTarget;
+
+            return {
+                totalProfit,
+                totalProfitPercentage: (totalProfit / config.profitTarget) * 100,
+                currentBalance,
+                highestProfitDay,
+                consistencyPercentage,
+                consistencyStatus,
+                profitableDays,
+                lossDays,
+                remainingDays,
+                remainingProfit,
+                targetReached,
+                consistencyPassed
+            };
+        }
+
+        // Add new trading day
+        function addTradingDay() {
+            const selectedAccount = parseInt(document.getElementById('selected-account').value);
+            const newDate = document.getElementById('new-date').value;
+            const newPnL = parseFloat(document.getElementById('new-pnl').value);
+
+            if (newDate && !isNaN(newPnL)) {
+                if (selectedAccount === 1) {
+                    account1Days.push({ date: newDate, pnl: newPnL });
+                } else {
+                    account2Days.push({ date: newDate, pnl: newPnL });
+                }
+
+                // Clear inputs
+                document.getElementById('new-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('new-pnl').value = '';
+
+                // Update displays
+                updateAllDisplays();
+                
+                // Show success message
+                alert(`Trading Tag erfolgreich hinzugefügt für Account ${selectedAccount}!`);
+            } else {
+                alert('Bitte Datum und P&L eingeben!');
+            }
+        }
+
+        // Remove trading day
+        function removeTradingDay(index, accountNum) {
+            if (confirm('Trading Tag wirklich löschen?')) {
+                if (accountNum === 1) {
+                    account1Days.splice(index, 1);
+                } else {
+                    account2Days.splice(index, 1);
+                }
+                updateAllDisplays();
+            }
+        }
+
+        // Update all displays
+        function updateAllDisplays() {
+            const account1Metrics = calculateMetrics(account1Days, 1);
+            const account2Metrics = calculateMetrics(account2Days, 2);
+
+            updateOverview(account1Metrics, account2Metrics);
+            updateAccountTables();
+        }
+
+        // Update overview section
+        function updateOverview(acc1, acc2) {
+            // Account 1 Overview
+            document.getElementById('acc1-profit').textContent = formatCurrency(acc1.totalProfit);
+            document.getElementById('acc1-consistency').textContent = acc1.consistencyPercentage.toFixed(1) + '%';
+            document.getElementById('acc1-days').textContent = `${account1Days.length} / 5`;
+            document.getElementById('acc1-remaining').textContent = formatCurrency(acc1.remainingProfit);
+            
+            const acc1Status = document.getElementById('acc1-status');
+            acc1Status.textContent = acc1.consistencyStatus;
+            acc1Status.className = `px-3 py-1 rounded-full text-sm font-medium ${
+                acc1.consistencyPassed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            }`;
+
+            // Account 2 Overview
+            document.getElementById('acc2-profit').textContent = formatCurrency(acc2.totalProfit);
+            document.getElementById('acc2-consistency').textContent = acc2.consistencyPercentage.toFixed(1) + '%';
+            document.getElementById('acc2-days').textContent = `${account2Days.length} / 5`;
+            document.getElementById('acc2-remaining').textContent = formatCurrency(acc2.remainingProfit);
+            
+            const acc2Status = document.getElementById('acc2-status');
+            acc2Status.textContent = acc2.consistencyStatus;
+            acc2Status.className = `px-3 py-1 rounded-full text-sm font-medium ${
+                acc2.consistencyPassed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            }`;
+
+            // Combined stats
+            document.getElementById('total-profit').textContent = formatCurrency(acc1.totalProfit + acc2.totalProfit);
+            document.getElementById('total-balance').textContent = formatCurrency(acc1.currentBalance + acc2.currentBalance);
+            document.getElementById('total-days').textContent = account1Days.length + account2Days.length;
+            document.getElementById('total-remaining').textContent = formatCurrency(acc1.remainingProfit + acc2.remainingProfit);
+        }
+
+        // Update account tables
+        function updateAccountTables() {
+            updateAccountTable(1, account1Days);
+            updateAccountTable(2, account2Days);
+        }
+
+        function updateAccountTable(accountNum, tradingDays) {
+            const tableBody = document.getElementById(`account${accountNum}-table`);
+            const metrics = calculateMetrics(tradingDays, accountNum);
+            
+            tableBody.innerHTML = '';
+            
+            [...tradingDays]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .forEach((day, index) => {
+                    const percentage = metrics.totalProfit > 0 ? (day.pnl / metrics.totalProfit) * 100 : 0;
+                    const isHighest = day.pnl === metrics.highestProfitDay;
+                    
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-50';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDate(day.date)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium ${day.pnl >= 0 ? 'text-green-600' : 'text-red-600'}">
+                            ${day.pnl >= 0 ? '+' : ''}${formatCurrency(day.pnl)}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            ${percentage.toFixed(1)}%
+                            ${isHighest ? '<span class="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Höchster Tag</span>' : ''}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            ${percentage <= 50 ? 
+                                '<span class="text-green-600">✅ OK</span>' : 
+                                '<span class="text-red-600">❌ Zu hoch</span>'
+                            }
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button onclick="removeTradingDay(${tradingDays.indexOf(day)}, ${accountNum})" class="text-red-600 hover:text-red-900 transition-colors">
+                                🗑️
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+        }
+
+        // Live calculator
+        function updateLiveCalc() {
+            const accountNum = parseInt(document.getElementById('calc-account').value);
+            const profit = parseFloat(document.getElementById('calc-profit').value);
+            const resultDiv = document.getElementById('calc-result');
+
+            if (isNaN(profit) || profit <= 0) {
+                resultDiv.innerHTML = '<div class="text-gray-500">Geben Sie einen Profit-Wert ein für Live-Berechnung</div>';
+                return;
+            }
+
+            const tradingDays = accountNum === 1 ? account1Days : account2Days;
+            const metrics = calculateMetrics(tradingDays, accountNum);
+            const config = accountConfigs[accountNum];
+
+            const newTotal = metrics.totalProfit + profit;
+            const newHighest = Math.max(metrics.highestProfitDay, profit);
+            const newConsistency = (newHighest / newTotal) * 100;
+            const maxAllowed = config.profitTarget * 0.5;
+
+            resultDiv.innerHTML = `
+                <div class="space-y-1">
+                    <p><strong>Neuer Gesamtprofit:</strong> ${formatCurrency(newTotal)}</p>
+                    <p><strong>Neue Konsistenz:</strong> <span class="${newConsistency <= 50 ? 'text-green-600' : 'text-red-600'}">${newConsistency.toFixed(1)}%</span></p>
+                    <p><strong>Status:</strong> <span class="${newConsistency <= 50 ? 'text-green-600' : 'text-red-600'}">${newConsistency <= 50 ? '✅ Bestanden' : '❌ Zu hoch'}</span></p>
+                    ${profit > maxAllowed ? `<p class="text-red-600"><strong>⚠️ Warnung:</strong> Überschreitet max. ${formatCurrency(maxAllowed)}</p>` : ''}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
